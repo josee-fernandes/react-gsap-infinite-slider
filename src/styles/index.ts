@@ -83,7 +83,10 @@ export const NavLink = styled.a`
 
 
 
-export const Content = styled.div``
+export const Content = styled.div`
+   display: grid;
+   grid-template-columns: 45rem 1fr;
+`
 
 export const SectionIntro = styled.div``
 
@@ -100,16 +103,51 @@ export const Showcase = styled.div``
 
 
 
-export const Bottom = styled.div``
+export const Bottom = styled.div`
+   display: grid;
+   grid-template-columns: 45rem 1fr;
+   grid-column: main-start / -1;
+   overflow: hidden;
+   border-top-left-radius: 40px;
+   margin: 0 0 0 3rem;
+   height: calc(100vh - 79rem);
+`
 
-export const BottomLeft = styled.div``
+export const BottomLeft = styled.div`
+   color: ${white}
+   display: flex;
+   align-items: center;
+   padding: 30px;
+   background-color: #3c2d53;
+`
 
-export const Count = styled.div``
+export const Count = styled.div`
+   font-size: 6rem;
+   flex: 0 0 7rem;
+`
 
-export const LineWrapper = styled.div``
+export const LineWrapper = styled.div`
+   flex: 0 0 20%;
+   height: 100%;
+   display: flex;
+   justify-content: center;
+`
 
-export const Line = styled.div``
+export const Line = styled.div`
+   height: 100%;
+   width: 1px;
+   margin: 0 1rem;
+   background-color: ${white};
+`
 
-export const Description = styled.div``
+export const Description = styled.div`
+   font-family: sans-serif;
+   font-weight: 300;
+   font-size: 1.4rem;
+   line-height: 1.7;
+   color: #e2e2e2;
+`
 
-export const BottomRight = styled.div``
+export const BottomRight = styled.div`
+   background-color: rgba(147, 62, 162, 0.925);
+`
