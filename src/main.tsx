@@ -3,9 +3,13 @@ import ReactDOM from 'react-dom'
 
 import { App } from './App'
 
+import { ShowcaseContextProvider } from './contexts/showcase'
+
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <ShowcaseContextProvider>
+      <App />
+    </ShowcaseContextProvider>
   </React.StrictMode>,
   document.getElementById('root')
 )

@@ -1,3 +1,5 @@
+import { useShowcase } from './hooks/showcase'
+
 import { GlobalStyles } from './styles'
 
 // Main
@@ -9,7 +11,11 @@ import { Content, SectionIntro, TitleSmall, TitleBig, IntroText, Button, Showcas
 // Bottom
 import { Bottom, BottomLeft, Count, LineWrapper, Line, Description, BottomRight } from './styles'
 
+import { Collection } from './components/Collection'
+
 export const App = () => {
+  const { showcaseWidth } = useShowcase()
+
   return (
     <>
       <GlobalStyles />
@@ -38,7 +44,9 @@ export const App = () => {
             </IntroText>
             <Button>Get started</Button>
           </SectionIntro>
-          <Showcase></Showcase>
+          <Showcase width={showcaseWidth}>
+            <Collection />
+          </Showcase>
         </Content>
 
         <Bottom>
