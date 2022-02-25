@@ -3,13 +3,13 @@ import ReactDOM from 'react-dom'
 
 import { App } from './App'
 
-import { ShowcaseContextProvider } from './contexts/showcase'
+import { SliderContextProvider } from './contexts/slider'
 
 ReactDOM.render(
   <React.StrictMode>
-    <ShowcaseContextProvider>
+    <SliderContextProvider>
       <App />
-    </ShowcaseContextProvider>
+    </SliderContextProvider>
   </React.StrictMode>,
   document.getElementById('root')
 )

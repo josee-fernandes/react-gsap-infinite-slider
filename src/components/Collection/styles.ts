@@ -74,6 +74,7 @@ export const FigureInfo = styled.div`
    top: 70%;
    right: inherit;
    bottom: 0;
+   width: 100%;
    z-index: 100;
    display: flex;
    align-items: center;
@@ -169,8 +170,13 @@ export const Progress = styled.div`
    background-color: ${white};
 `
 
-export const ProgressLine = styled.div`
-   width: 0;
+interface IProgressLine {
+   width: number
+}
+
+export const ProgressLine = styled.div<IProgressLine>`
+   width: ${props => `${props.width}%`};
    height: inherit;
    background-color: ${pink1};
+   transition: all .5s ease;
 `

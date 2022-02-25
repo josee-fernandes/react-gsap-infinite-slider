@@ -1,4 +1,4 @@
-import { useShowcase } from './hooks/showcase'
+import { useSlider } from './hooks/slider'
 
 import { GlobalStyles } from './styles'
 
@@ -14,7 +14,7 @@ import { Bottom, BottomLeft, Count, LineWrapper, Line, Description, BottomRight 
 import { Collection } from './components/Collection'
 
 export const App = () => {
-  const { showcaseWidth } = useShowcase()
+  const { showcaseWidth, count } = useSlider()
 
   return (
     <>
@@ -51,7 +51,7 @@ export const App = () => {
 
         <Bottom>
           <BottomLeft>
-            <Count>01</Count>
+            <Count>{`${count + 1}`.padStart(2, "0")}</Count>
             <LineWrapper>
               <Line></Line>
             </LineWrapper>

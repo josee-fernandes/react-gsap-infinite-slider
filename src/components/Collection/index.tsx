@@ -6,7 +6,7 @@ import { gsap, Expo } from 'gsap'
 
 import { getPhotos } from '../../services'
 
-import { useShowcase } from '../../hooks/showcase'
+import { useSlider } from '../../hooks/slider'
 
 import { 
    CollectionWrapper,
@@ -24,12 +24,15 @@ import {
 } from './styles'
 
 export const Collection = () => {
-   const { setShowcaseWidth } = useShowcase()
+   const { setShowcaseWidth, setCount } = useSlider()
    
    const [collection, setCollection] = React.useState<ICollectionImage[]>([])
    const [isLoadingCollection, setIsLoadingCollection] = React.useState(false)
    const [calculatedWidth, setCalculatedWidth] = React.useState(0)
-
+   const [activeIndex, setActiveIndex] = React.useState(0)
+   const [progressIndex, setProgressIndex] = React.useState(0)
+   const [progress, setProgress] = React.useState(0)
+   const [enabledButton, setEnabledButton] = React.useState(true)
 
    const collectionWrapperRef = React.useRef<HTMLDivElement>(null)
 
@@ -81,6 +84,90 @@ export const Collection = () => {
       }
    }
 
+   const handleFigureClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+      console.log(event)
+   }
+
+   const handleNextClick = () => {
+      handleSlide()
+   }
+
+   const handleResetBackwards = ({ child, propWidth, index }: { child: ChildNode, propWidth: number, index: number }) => {
+      if (activeIndex === index) {
+         gsap.to(child, {
+            duration: 0,
+            x: propWidth * (collection.length - 1 - activeIndex),
+            y: -(25 * collection.length - 25)
+         }).then(() => setTimeout(() => handleIncreaseActiveIndex()))
+      }
+   }
+
+   const handleSlide = (elementPadding = 40, verticalTranslatePosition = 25, elementMargin = 0) => {
+      setEnabledButton(false)
+      handleIncreaseProgressIndex()
+
+      collectionWrapperRef?.current?.childNodes
+         .forEach((_, index: number) => {
+            const child = collectionWrapperRef?.current?.children[index]
+
+            if (child) {
+               const [x, y] = gsap.getProperty(child, 'transform')
+                  ?.toString()
+                  ?.match(/[0-9\,\-]/g)
+                  ?.join('')
+                  ?.split(',') ?? ['0', '0']
+               const propX = Number(x)
+               const propY = Number(y)
+               const propWidth = Number(gsap.getProperty(child, 'width')) + elementPadding + elementMargin
+               const propXPosition = Math.abs(propX)
+   
+               console.log({ x, y, propX, propY, propWidth, propXPosition })
+   
+               if (propX > 0) {
+                  gsap.to(child, {
+                     // transform: `translate3d(${propX - propWidth}px, ${propY + -(index * verticalTranslatePosition)}px, 0)`,
+                     transform: `translate3d(${propX - propWidth}px, 0, 0)`,
+                     duration: 1,
+                     ease: Expo.easeInOut
+                  }).then(() => {
+                     setEnabledButton(true)
+                  })
+               } else {
+                  gsap.to(child, {
+                     // transform: `translate3d(${-(propXPosition + propWidth)}px, ${propY + (index * verticalTranslatePosition)}px, 0)`,
+                     transform: `translate3d(${-(propXPosition + propWidth)}px, 0, 0)`,
+                     duration: 1,
+                     ease: Expo.easeInOut
+                  }).then(() => {
+                     handleResetBackwards({ child, propWidth, index })
+                     setEnabledButton(true)
+                  })
+               }
+            }
+         })
+   }
+
+   const handleIncreaseActiveIndex = () => {
+      const _activeIndex = (activeIndex + 1) % collection.length
+
+      setActiveIndex(_activeIndex)
+   }
+
+   const handleIncreaseProgressIndex = () => {
+      const _progressIndex = (activeIndex + 1) % collection.length
+
+      setProgressIndex(_progressIndex)
+   }
+
+   const handleUpdateProgress = () => {
+      const _progress = progressIndex * 100 / (collection.length - 1)
+
+      console.log(_progress)
+
+      setProgress(_progress)
+      setCount(progressIndex)
+   }
+
    React.useEffect(() => {
       if (collection.length) {
          handleCalculateWrapperWidth()
@@ -89,7 +176,11 @@ export const Collection = () => {
          handleLoadCollection()
       }
    }, [collection])
-   
+
+   React.useEffect(() => {
+      handleUpdateProgress()
+   }, [progressIndex])
+
    return (
       <>
          <CollectionWrapper
@@ -97,24 +188,31 @@ export const Collection = () => {
             width={calculatedWidth}
          >
             {collection?.map((image, index) => (
-               <CollectionFigure key={image.id} index={index}>
+               <CollectionFigure
+                  key={image.id}
+                  index={index}
+                  onClick={handleFigureClick}
+               >
                   <FigureInfo>
-                     <FigureCount active={false} >{index + 1}</FigureCount>
-                     <FigureLine  active={false} />
-                     <FigureAuthor active={false}>{image.user.name}</FigureAuthor>
+                     <FigureCount active={progressIndex === index} >{index + 1}</FigureCount>
+                     <FigureLine  active={progressIndex === index} />
+                     <FigureAuthor active={progressIndex === index}>{image.user.name}</FigureAuthor>
                   </FigureInfo>
-                  <Overlay active={false}>
+                  <Overlay active={progressIndex === index}>
                   </Overlay>
                   <OverlayImage src={image.urls.regular} />
                </CollectionFigure>
             ))}
          </CollectionWrapper>
          <CollectionActions>
-            <ActionButton>
+            <ActionButton
+               disabled={!enabledButton}
+               onClick={handleNextClick}
+            >
                N
             </ActionButton>
             <Progress>
-               <ProgressLine />
+               <ProgressLine width={progress} />
             </Progress>
          </CollectionActions>
       </>
